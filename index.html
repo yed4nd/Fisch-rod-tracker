@@ -1,0 +1,273 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fisch Rod Collection</title><style>
+*{box-sizing:border-box}body{margin:0;background:#07111f;color:#edf6ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:900px;margin:auto;padding:20px 14px 50px}h1{margin:0 0 5px}.muted{color:#91a8bd;font-size:13px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:15px 0}.card{background:#0d1b2d;border:1px solid #243b55;border-radius:14px;padding:13px}.card b{display:block;font-size:23px;margin-top:4px}.progress{margin-bottom:14px}.bar{height:10px;background:#1a2b40;border-radius:99px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,#3a9cff,#63e6be)}.controls{position:sticky;top:0;background:rgba(7,17,31,.96);padding:10px 0;z-index:3}input.search{width:100%;padding:13px;border-radius:12px;border:1px solid #243b55;background:#0d1b2d;color:#fff;font-size:16px;outline:none}.buttons{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}button{border:1px solid #243b55;background:#0d1b2d;color:#edf6ff;border-radius:10px;padding:10px 13px;font-size:14px}button.active{background:#173d5e;border-color:#3e9bd9}.list{display:grid;gap:8px;margin-top:15px}.rod{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:center;background:#0d1b2d;border:1px solid #243b55;border-radius:14px;padding:12px}.rod.owned{border-color:#286e57}.check{width:22px;height:22px;accent-color:#51d89b}.name{font-weight:700;font-size:17px}.meta{color:#91a8bd;font-size:12px;margin-top:3px}.badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.badge{font-size:11px;padding:4px 7px;border-radius:99px;background:#243b55}.a{background:#173d35;color:#8de5c4}.l{background:#463523;color:#ffd994}.m{background:#273967;color:#a9c7ff}.u{background:#3d2430;color:#ffb4be}.empty{padding:40px;text-align:center;color:#91a8bd}@media(max-width:650px){.stats{grid-template-columns:repeat(2,1fr)}}
+</style></head><body><main class="wrap"><h1>🎣 Fisch Rod Collection</h1><div class="muted">262개 낚싯대 · 보유 체크 · 검색 · 필터 · Masterline 진행률</div><div class="stats"><div class="card"><span class="muted">전체</span><b id="total">0</b></div><div class="card"><span class="muted">보유</span><b id="owned">0</b></div><div class="card"><span class="muted">획득 가능</span><b id="avail">0</b></div><div class="card"><span class="muted">한정</span><b id="limited">0</b></div></div><div class="card progress"><div><b>전체 수집률 <span id="pct">0%</span></b><div class="bar"><div id="fill" class="fill"></div></div></div><div style="margin-top:14px"><b>⭐ Masterline <span id="mpct">0% · 0/147</span></b><div class="bar"><div id="mfill" class="fill"></div></div></div></div><div class="controls"><input id="q" class="search" placeholder="낚싯대 이름 검색 — halibu → Halibut Harpoon"><div class="buttons"><button data-f="all" class="active">전체</button><button data-f="available">획득 가능</button><button data-f="limited">한정</button><button data-f="masterline">Masterline 대상</button><button data-f="missing">미보유</button><button data-f="owned">보유</button></div></div><div id="list" class="list"></div><div class="muted" style="margin-top:18px;line-height:1.6">체크 상태는 이 브라우저의 localStorage에 저장됩니다. 데이터 기준: 2026-09-15 · 전체 262 / 획득 가능 157 / 한정 113 / Masterline 147.</div></main><script>
+const DATA=`Tryhard Rod|6
+Castbound|1
+Cinder Block Rod|6
+Leprechaun Line|1
+Masterline Rod|2
+Random Rod|6
+Shady Rod|6
+Paintbrush|1
+Astraeus Serenade|1
+Clover Rod|1
+Dead Man's Rod|6
+Fabulous Rod|6
+Polaris Serenade|1
+Remembrance|1
+Ruinous Oath|6
+Verdant Oath|6
+Noiseform|1
+SOULREAPER|1
+Blade Of Glorp|6
+Halibut Harpoon|6
+Rod of the Singularity|6
+Great Rod of Oscar|6
+Onirifalx|6
+Requiem|6
+Olympian Godbreaker|6
+Wind Elemental|6
+Merlin's Staff|6
+Crew Rod|6
+Destiny Rod|6
+Fish Photographer|1
+Hades' Soul-Scythe|6
+Heaven's Rod|6
+Sword of Darkness|1
+Sword of Light|1
+Thalassar's Ruin|6
+Tidemourner|6
+Toxic Spire Rod|6
+Crowbar|6
+Electric Guitar|1
+Nates Blade|1
+Stellarwave Melody|6
+Pinion's Aria|6
+MiguRod|1
+Lemonade Serenade|1
+View Smasher|1
+Clickbait Caster|1
+Cusk Purger|6
+Lullaby|1
+Seraphic Rod|6
+Wingkeeper|1
+Wingripper|1
+Leviathan's Fang Rod|6
+Fallen Snowblade|1
+Dreambreaker|6
+Elder Mossripper|6
+Cupid's Embrace|1
+Terrotrapper|6
+Astralhook Rod|1
+Bloomspire: Blooming Splendor|6
+Cryolash|6
+Darkheart|1
+Fortune Rod|6
+Fruitline|0
+Luminescent Oath|6
+Silly Fun Happy Rod|1
+Zeus's Thundermaul|6
+Ethereal Prism Rod|6
+Cerulean Fang Rod|6
+Challenger's Rod|6
+Acidgrinder|1
+Kraken Rod|6
+Abaia's Spite|6
+Rainbow Cluster Rod|6
+Scalding Hook|6
+Starshell Rod|1
+Titanium Rod|6
+Lucky Rod|6
+North Pole|1
+Bloomspire: Slumbering Elegance|1
+Cinderstring|1
+Duskwire|6
+Meteoric Rod|6
+Plaguereaver|6
+Poseidon's Lance|6
+Rod Of The Forgotten Fang|6
+Sweet-Stinger|6
+Rod Of The Exalted One|6
+Scarlet Spincaster Rod|6
+Jack-o-Blazer|1
+Dusekkar Rod|1
+Ancient Idol Rod|6
+Poseidon Rod|6
+Moonlit Rod|6
+Rod Of The Eternal King|6
+Voyager Rod|6
+Breeze Caster|6
+Noctone|1
+Apollo's Sunshot|6
+Bellona's Waraxe|6
+Bunnybloom Caster|1
+Chrysalis|1
+Free Spirit Rod|6
+Katana Rod|1
+Liberty-Line|1
+Paleontologist's Rod|1
+Pen Rod|3
+Popsicle Rod|1
+Precision Rod|6
+Shamrock Rod|1
+Sovereign Doombringer|1
+Sunken Rod|6
+Test Rod|1
+Trident Rod|6
+Great Dreamer Rod|6
+Artisan Rod|6
+Axe of Rhoads|1
+Azure Of Lagoon|6
+Rod Of The Zenith|6
+Necrotic Rod|1
+Floatie Rod|1
+The Lost Rod|6
+Wicked Fang Rod|6
+Rod of the Cosmos|1
+Champions Rod|6
+Rod Of The Depths|6
+Treasure Rod|6
+Volcanic Rod|6
+Wisdom Rod|6
+New Years Rod|1
+Abyssal Specter Rod|6
+Bloomspire: Twisted Toxins|6
+Carrot Rod|6
+Cupid's Bow|1
+Daybreaker Rod|6
+Eardrum|1
+Relic Rod|1
+Santa's Miracle Rod|1
+Scarlet Ravager|3
+Spiritbinder|6
+Experimental Rod|1
+Jinglestar Rod|1
+Creamsicle Rod|1
+Evil Pitchfork|6
+Gardenkeeper Rod|6
+Tempest Rod|6
+Vinefang Rod|1
+Vineweaver Rod|6
+Rose Rend|3
+Cornucopia Rod|1
+Beach Ball Rod|1
+Lobster Rod|1
+Zeus Rod|6
+Friendly Rod|6
+No-Life Rod|6
+NilCaster|3
+Crimsonwrath|1
+Frog Rod|6
+Igneous Rupturer|6
+Lucid Rod|6
+Original No-Life Rod|3
+Patriot Rod|1
+Riptide Rod|6
+Sand Castle Caster|1
+Sanguine Spire|3
+Scavenger Rod|6
+Seasons Rod|6
+Splitbranch Twig|6
+Stone Hammer|1
+Tranquility Rod|6
+Bat Whisperer Rod|1
+Cerebra|1
+Fallen Rod|6
+Luminous Rod|6
+Blazebringer Rod|6
+Crystalized Rod|6
+Nocturnal Rod|6
+Steampunk Rod|1
+Tiki Rod|1
+Frostbane Rod|3
+Kings Rod|6
+Maelstrom|1
+Toxinburst Rod|6
+Brick Built Rod|1
+Fang of the Eclipse|1
+Long Rod|6
+Marrow Rod|6
+Microphone Rod|1
+Phoenix Rod|6
+Smurf Rod|1
+Midas Rod|6
+Brick Rod|6
+Christmas Tree Rod|1
+Egg Rod|1
+Nico's Yarncaster|6
+Paper Fan Rod|1
+Summit Rod|6
+Verdant Shear Rod|6
+Wildflower Rod|6
+Coral Rod|6
+Brother's Rod|1
+Depthseeker Rod|6
+Spirit of the Forest|6
+Superstar Rod|1
+Avalanche Rod|6
+Spooky Rod|1
+Gingerbread Rod|1
+Reinforced Rod|6
+Rose Rod|1
+Tidal Wave Rod|1
+Aurora Rod|6
+Celestial Rod|6
+Fixer's Rod|1
+Ice Warpers Rod|6
+Merchant Rod|1
+Mission Specialist's Rod|1
+Mythical Rod|6
+Pool Noodle Rod|1
+Resourceful Rod|6
+Firefly Rod|6
+Magma Rod|6
+Adventurer's Rod|1
+Anchor n' Chain|6
+Boreal Rod|6
+Brine-Infused Rod|6
+Eidolon Rod|6
+Haunted Rod|1
+Peppermint Rod|1
+Scurvy Rod|6
+Rapid Rod|6
+Antler Rod|1
+Arctic Rod|6
+Auric Rod|6
+Firework Rod|1
+Fischmas Rod|1
+Frost Warden Rod|1
+Fungal Rod|6
+Decayed Rod|6
+Stone Rod|6
+Frostfire Rod|1
+Steady Rod|6
+Astral Rod|1
+Event Horizon Rod|1
+North-Star Rod|1
+Candy Cane Rod|1
+Carbon Rod|6
+Rod Of Time|1
+Cheeto Rod|3
+Krampus's Rod|1
+Plastic Rod|6
+Fast Rod|6
+Fischer's Rod|3
+Buddy Bond Rod|1
+Bloomspire|6
+Bone Blade|1
+Flimsy Rod|6
+Magnet Rod|6
+Part|1
+The Boom Ball|6
+Upside-Down Rod|1
+Demon-Slayer|1
+Training Rod|6
+Dave Rod|6`.split('\n').map(x=>{let [name,f]=x.split('|');f=+f;return{name,limited:!!(f&1),obtainable:!!(f&2),masterline:!!(f&4)}});const KEY='fischRodTracker_v2';let owned=JSON.parse(localStorage.getItem(KEY)||'{}'),filter='all',query='';
+const $=id=>document.getElementById(id),norm=s=>String(s).toLowerCase().normalize('NFKD').replace(/[’'`]/g,'').replace(/[^a-z0-9가-힣]/g,'');
+const aliases={'Halibut Harpoon':'할리벗 하푼 할리벗하푼 halibu halibut harpoon'};
+function searchMatch(name,q){q=norm(q);if(!q)return true;let n=norm(name+' '+(aliases[name]||''));if(n.includes(q))return true;let j=0;for(const c of n)if(c===q[j]){j++;if(j===q.length)return true}return false}
+function save(){localStorage.setItem(KEY,JSON.stringify(owned))}
+function render(){const q=norm(query),list=$('list');list.innerHTML='';let shown=0;DATA.forEach(r=>{let ok=searchMatch(r.name,q);if(filter==='available')ok&&=r.obtainable;if(filter==='limited')ok&&=r.limited;if(filter==='masterline')ok&&=r.masterline;if(filter==='missing')ok&&=!owned[r.name];if(filter==='owned')ok&&=!!owned[r.name];if(!ok)return;shown++;const d=document.createElement('div');d.className='rod'+(owned[r.name]?' owned':'');d.innerHTML=`<input class="check" type="checkbox" ${owned[r.name]?'checked':''}><div><div class="name"></div><div class="meta">${r.masterline?'Masterline 대상 · ':''}${r.limited?'한정 낚싯대':'영구 낚싯대'}</div><div class="badges">${r.limited?'<span class="badge l">한정</span>':''}${r.obtainable?'<span class="badge a">획득 가능</span>':'<span class="badge u">현재 획득 불가</span>'}${r.masterline?'<span class="badge m">Masterline</span>':''}</div></div>`;d.querySelector('.name').textContent=r.name;d.querySelector('.check').onchange=e=>{owned[r.name]=e.target.checked?1:0;if(!e.target.checked)delete owned[r.name];save();update()};list.appendChild(d)});if(!shown)list.innerHTML='<div class="empty">검색/필터 조건에 맞는 낚싯대가 없습니다.</div>';updateStats()}
+function updateStats(){let own=DATA.filter(r=>owned[r.name]).length,m=DATA.filter(r=>r.masterline&&owned[r.name]).length,t=DATA.length,mt=DATA.filter(r=>r.masterline).length,p=t?own/t*100:0,mp=mt?m/mt*100:0;$('total').textContent=t;$('owned').textContent=own;$('avail').textContent=DATA.filter(r=>r.obtainable).length;$('limited').textContent=DATA.filter(r=>r.limited).length;$('pct').textContent=p.toFixed(1)+'%';$('fill').style.width=p+'%';$('mpct').textContent=mp.toFixed(1)+'% · '+m+'/'+mt;$('mfill').style.width=mp+'%'}
+function update(){render()}$('q').oninput=e=>{query=e.target.value;render()};document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{filter=b.dataset.f;document.querySelectorAll('[data-f]').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});render();
+</script></body></html>
